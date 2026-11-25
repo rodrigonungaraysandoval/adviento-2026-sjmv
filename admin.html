@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#3d2150">
+<meta name="robots" content="noindex">
+<title>Panel · Rompecabezas de Adviento</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/estilo.css">
+</head>
+<body class="admin">
+<header class="cabecera">
+  <img src="assets/logo.png" alt="">
+  <div>
+    <h1>Panel del retiro</h1>
+    <p>Liberar las piezas del rompecabezas</p>
+  </div>
+</header>
+
+<main>
+  <div id="avisoPrueba" class="aviso-prueba" hidden>
+    Modo de prueba: Firebase aún no está configurado. Abra la página de participantes en otra pestaña de este mismo navegador para ver el efecto.
+  </div>
+
+  <div id="cajaLogin" class="caja" hidden>
+    <p>Entre con su cuenta de Google de administrador.</p>
+    <button id="btnEntrar" class="boton grande">Entrar con Google</button>
+    <p id="msgLogin" class="nota"></p>
+  </div>
+
+  <div id="panel" hidden>
+    <div class="estado">
+      <span id="punto" class="punto"></span>
+      <span id="textoEstado">Conectando…</span>
+    </div>
+
+    <div class="caja">
+      <button id="btnSiguiente" class="boton oro grande">Liberar…</button>
+      <p class="nota">Cada participante recibe la pieza en su celular en un par de segundos.</p>
+    </div>
+
+    <div class="caja">
+      <ul id="lista" class="lista"></ul>
+    </div>
+
+    <div class="caja">
+      <div class="fila">
+        <button id="btnAtras" class="boton claro">Quitar la última</button>
+        <button id="btnReiniciar" class="boton claro">Reiniciar a 0</button>
+      </div>
+      <p class="nota">Use “Reiniciar a 0” después de un ensayo: los celulares de prueba también se vacían.</p>
+    </div>
+
+    <p class="nota" id="sesion"></p>
+  </div>
+</main>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
