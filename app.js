@@ -241,12 +241,12 @@ async function crearTarjeta() {
     y += fs * .62;
   });
 
-  return new Promise(ok => c.toBlob(ok, "image/png"));
+  return new Promise(ok => c.toBlob(ok, "image/jpeg", 0.9));
 }
 
 $("btnCompartir").addEventListener("click", async () => {
   if (!tarjetaBlob) return;
-  const archivo = new File([tarjetaBlob], "Adviento-2026.png", { type: "image/png" });
+  const archivo = new File([tarjetaBlob], "Adviento-2026.jpg", { type: "image/jpeg" });
   try {
     if (navigator.canShare && navigator.canShare({ files: [archivo] })) {
       await navigator.share({ files: [archivo], title: "Adviento 2026" });
@@ -259,7 +259,7 @@ $("btnDescargar").addEventListener("click", descargar);
 function descargar() {
   if (!tarjetaURL) return;
   const a = document.createElement("a");
-  a.href = tarjetaURL; a.download = "Adviento-2026.png";
+  a.href = tarjetaURL; a.download = "Adviento-2026.jpg";
   document.body.appendChild(a); a.click(); a.remove();
 }
 if (!navigator.share) $("btnCompartir").hidden = true;
