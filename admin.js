@@ -1,6 +1,6 @@
-import { MOMENTOS } from "./datos.js?v=5";
-import { escucharLiberadas, fijarLiberadas, vigilarSesion, entrar, salir, MODO_PRUEBA } from "./estado.js?v=5";
-import { ADMIN_EMAIL } from "./config.js?v=5";
+import { MOMENTOS } from "./datos.js?v=6";
+import { escucharLiberadas, fijarLiberadas, vigilarSesion, entrar, salir, MODO_PRUEBA } from "./estado.js?v=6";
+import { ADMIN_EMAIL } from "./config.js?v=6";
 
 const $ = id => document.getElementById(id);
 let liberadas = 0, ocupado = false, iniciado = false;

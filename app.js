@@ -1,6 +1,6 @@
-import { MOMENTOS, TABLERO } from "./datos.js?v=5";
-import { escucharLiberadas, MODO_PRUEBA } from "./estado.js?v=5";
-import { SALA } from "./config.js?v=5";
+import { MOMENTOS, TABLERO } from "./datos.js?v=6";
+import { escucharLiberadas, MODO_PRUEBA } from "./estado.js?v=6";
+import { SALA } from "./config.js?v=6";
 
 const $ = id => document.getElementById(id);
 const tablero = $("tablero"), bandeja = $("bandeja");
@@ -57,8 +57,7 @@ function dibujarBandeja() {
   if (!bandeja.querySelector(".ficha")) {
     const v = document.createElement("div"); v.className = "vacia";
     v.textContent = colocadas.size === 7 ? "¡Completaste el rompecabezas!"
-      : liberadas === 0 ? "Aquí se mostrarán las piezas del rompecabezas que deberás colocar."
-      : "Espera la siguiente pieza: llegará al terminar el próximo momento.";
+      : "Aquí se mostrarán las piezas del rompecabezas que deberás colocar.";
     bandeja.appendChild(v);
   }
   if (nuevas && ya.size + colocadas.size > 0 && navigator.vibrate) navigator.vibrate(90);
@@ -142,17 +141,78 @@ function colocar(m) {
   mostrarFrase(m);
 }
 
-/* ---------- Ver una pieza en grande ---------- */
+/* ---------- Ver una pieza en grande (con su propio zoom) ---------- */
+const zoom = $("zoom"), zImg = $("zImg"), zMarco = $("zMarco");
+let zEsc = 1, zX = 0, zY = 0, zoomDesde = 0;
+function aplicarZ() { zImg.style.transform = `translate(${zX}px, ${zY}px) scale(${zEsc})`; }
+function limitarZ() {
+  zEsc = Math.min(5, Math.max(1, zEsc));
+  if (zEsc === 1) { zX = 0; zY = 0; return; }
+  const r = zMarco.getBoundingClientRect();
+  const mx = r.width * (zEsc - 1) / 2, my = r.height * (zEsc - 1) / 2;
+  zX = Math.max(-mx, Math.min(mx, zX)); zY = Math.max(-my, Math.min(my, zY));
+}
 function abrirZoom(m) {
-  $("zImg").src = m.img;
-  $("zImg").alt = m.nombre;
+  zEsc = 1; zX = 0; zY = 0; aplicarZ();
+  zImg.src = m.img; zImg.alt = m.nombre;
   $("zNombre").textContent = `${m.n}. ${m.nombre}`;
-  $("zoom").classList.add("abierto");
+  zoom.classList.add("abierto");
   zoomDesde = Date.now();
 }
-let zoomDesde = 0;
-// (el mismo toque que abre la pieza genera un "click"; se ignora para que no la cierre al instante)
-$("zoom").addEventListener("click", () => { if (Date.now() - zoomDesde > 400) $("zoom").classList.remove("abierto"); });
+function cerrarZoom() { zoom.classList.remove("abierto"); zEsc = 1; zX = 0; zY = 0; aplicarZ(); }
+$("zCerrar").addEventListener("click", e => { e.stopPropagation(); cerrarZoom(); });
+// Toque fuera de la imagen: cerrar (se ignora el toque que la acaba de abrir)
+zoom.addEventListener("click", e => {
+  if (Date.now() - zoomDesde < 400) return;
+  if (e.target === zoom || e.target === zMarco) cerrarZoom();
+});
+// Pellizcar, arrastrar y doble toque, solo sobre la imagen
+const dedos = new Map(); let ini = null, ultimoToque = 0;
+zImg.addEventListener("pointerdown", e => {
+  e.preventDefault(); zImg.setPointerCapture(e.pointerId);
+  dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  ini = { esc: zEsc, x: zX, y: zY, p: [...dedos.values()].map(d => ({ ...d })) };
+  if (dedos.size === 1) {
+    const ahora = Date.now();
+    if (ahora - ultimoToque < 300) {             // doble toque
+      if (zEsc > 1) { zEsc = 1; zX = 0; zY = 0; }
+      else {
+        const r = zMarco.getBoundingClientRect();
+        zEsc = 2.5;
+        zX = (r.left + r.width / 2 - e.clientX) * (zEsc - 1);
+        zY = (r.top + r.height / 2 - e.clientY) * (zEsc - 1);
+      }
+      limitarZ(); zImg.style.transition = "transform .2s"; aplicarZ();
+      setTimeout(() => zImg.style.transition = "", 220);
+      ultimoToque = 0; return;
+    }
+    ultimoToque = ahora;
+  }
+});
+zImg.addEventListener("pointermove", e => {
+  if (!dedos.has(e.pointerId) || !ini) return;
+  dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  const p = [...dedos.values()];
+  if (p.length >= 2 && ini.p.length >= 2) {
+    const d0 = Math.hypot(ini.p[0].x - ini.p[1].x, ini.p[0].y - ini.p[1].y);
+    const d1 = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+    const c0 = { x: (ini.p[0].x + ini.p[1].x) / 2, y: (ini.p[0].y + ini.p[1].y) / 2 };
+    const c1 = { x: (p[0].x + p[1].x) / 2, y: (p[0].y + p[1].y) / 2 };
+    zEsc = ini.esc * d1 / Math.max(d0, 1);
+    zX = ini.x + (c1.x - c0.x); zY = ini.y + (c1.y - c0.y);
+  } else if (p.length === 1 && zEsc > 1) {
+    zX = ini.x + (p[0].x - ini.p[0].x); zY = ini.y + (p[0].y - ini.p[0].y);
+  }
+  limitarZ(); aplicarZ();
+});
+const soltar = e => {
+  dedos.delete(e.pointerId);
+  ini = dedos.size ? { esc: zEsc, x: zX, y: zY, p: [...dedos.values()].map(d => ({ ...d })) } : null;
+};
+zImg.addEventListener("pointerup", soltar);
+zImg.addEventListener("pointercancel", soltar);
+// iPhone: evitar que el navegador agrande toda la página con el pellizco
+document.addEventListener("gesturestart", e => e.preventDefault());
 
 // Tocar una pieza ya colocada en el tablero: se detecta por la forma real de la pieza.
 const formas = {};
@@ -184,8 +244,6 @@ tablero.addEventListener("click", async ev => {
 
 /* ---------- Frase ---------- */
 function mostrarFrase(m) {
-  $("vNum").textContent = `Momento ${m.n} de 7`;
-  $("vNombre").textContent = m.nombre;
   $("vFrase").textContent = m.frase;
   $("velo").classList.add("abierto");
 }
