@@ -1,7 +1,7 @@
 // Conexión con el "marcador compartido": cuántas piezas ha liberado el administrador.
 // Con Firebase configurado usa Cloud Firestore (documento retiros/<SALA>, campo "liberadas").
 // Sin configurar, un modo de prueba local (localStorage) que sincroniza pestañas del mismo navegador.
-import { firebaseConfig, ADMIN_EMAIL, SALA } from "./config.js";
+import { firebaseConfig, ADMIN_EMAIL, SALA } from "./config.js?v=5";
 
 const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
 export const MODO_PRUEBA =

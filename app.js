@@ -66,6 +66,7 @@ function dibujarBandeja() {
 
 function dibujarEstado() {
   const t = $("textoEstado");
+  if (!t) return;
   if (colocadas.size === 7) t.textContent = "Rompecabezas completo";
   else if (liberadas === 0) t.textContent = "Esperando el primer momento…";
   else t.textContent = `Piezas liberadas: ${liberadas} de 7`;
@@ -123,7 +124,7 @@ function fallar(m, rr, px, py) {
   const dentro = px > rr.left && px < rr.right && py > rr.top && py < rr.bottom;
   if (!dentro) return;
   fallos[m.n] = (fallos[m.n] || 0) + 1;
-  if (fallos[m.n] >= 2 && !tablero.querySelector(".pista")) {
+  if (fallos[m.n] >= 5 && !tablero.querySelector(".pista")) {
     const p = document.createElement("img");
     p.className = "pista"; p.src = m.img; p.alt = "";
     Object.assign(p.style, { left: pct(m.x), top: pct(m.y), width: pct(m.w), height: pct(m.h), zIndex: 20 });
@@ -276,12 +277,4 @@ escucharLiberadas(n => {
     terminado = false; tablero.classList.remove("terminado"); $("resultado").classList.remove("visible");
   }
   dibujarTodo();
-}, ok => {
-  $("punto").className = "punto " + (ok ? "ok" : "no");
-  if (!ok) $("textoEstado").textContent = "Sin conexión… reintentando";
-  else dibujarEstado();
-}).catch(err => {
-  console.error(err);
-  $("punto").className = "punto no";
-  $("textoEstado").textContent = "No se pudo conectar. Revisa tus datos y recarga.";
-});
+}).catch(err => console.error(err));

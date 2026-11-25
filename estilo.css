@@ -182,3 +182,21 @@ main { max-width: 600px; margin: 0 auto; padding: 14px 14px 40px; }
   background: #fff3cd; color: #6b5200; border: 1px solid #f0d98a; border-radius: 10px;
   padding: 9px 12px; font-size: .85rem; margin-bottom: 12px;
 }
+
+/* ---------- Pieza en grande ---------- */
+.zoom {
+  position: fixed; inset: 0; z-index: 90; background: rgba(20,10,28,.92);
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  padding: max(12px, env(safe-area-inset-top)) 10px max(12px, env(safe-area-inset-bottom));
+}
+.zoom.abierto { display: flex; animation: aparece .25s ease; }
+.zoom img {
+  max-width: 100%; max-height: calc(100% - 56px); object-fit: contain;
+  filter: drop-shadow(0 10px 30px rgba(0,0,0,.6));
+  animation: crece .35s cubic-bezier(.2,.9,.3,1.2);
+}
+@keyframes crece { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
+.zoom .zpie { color: #fff; text-align: center; margin-top: 12px; }
+.zoom .zpie b { display: block; font-family: var(--serif); font-weight: normal; font-size: 1.35rem; color: var(--oro-claro); }
+.zoom .zpie span { font-size: .8rem; opacity: .7; }
+.version { text-align: center; font-size: .7rem; color: #b9ad9a; margin-top: 28px; }
