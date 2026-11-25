@@ -1,6 +1,6 @@
-import { MOMENTOS } from "./datos.js?v=6";
-import { escucharLiberadas, fijarLiberadas, vigilarSesion, entrar, salir, MODO_PRUEBA } from "./estado.js?v=6";
-import { ADMIN_EMAIL } from "./config.js?v=6";
+import { MOMENTOS } from "./datos.js?v=8";
+import { escucharLiberadas, fijarLiberadas, vigilarSesion, entrar, salir, MODO_PRUEBA } from "./estado.js?v=8";
+import { ADMIN_EMAIL } from "./config.js?v=8";
 
 const $ = id => document.getElementById(id);
 let liberadas = 0, ocupado = false, iniciado = false;
@@ -12,7 +12,8 @@ function dibujar() {
     const cls = m.n <= liberadas ? "lib" : m.n === liberadas + 1 ? "sig" : "";
     const est = m.n <= liberadas ? "Liberada" : m.n === liberadas + 1 ? "Siguiente" : "";
     return `<li class="${cls}"><span class="marca">${m.n <= liberadas ? "✓" : m.n}</span>
-            <span class="nom">${m.nombre}</span><span class="est">${est}</span></li>`;
+            <span class="txt"><span class="nom">${m.nombre}</span><span class="fr">${m.frase}</span></span>
+            <span class="est">${est}</span></li>`;
   }).join("");
   const sig = MOMENTOS[liberadas];
   const b = $("btnSiguiente");

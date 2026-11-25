@@ -1,6 +1,6 @@
-import { MOMENTOS, TABLERO } from "./datos.js?v=6";
-import { escucharLiberadas, MODO_PRUEBA } from "./estado.js?v=6";
-import { SALA } from "./config.js?v=6";
+import { MOMENTOS, TABLERO } from "./datos.js?v=8";
+import { escucharLiberadas, MODO_PRUEBA } from "./estado.js?v=8";
+import { SALA } from "./config.js?v=8";
 
 const $ = id => document.getElementById(id);
 const tablero = $("tablero"), bandeja = $("bandeja");

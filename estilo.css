@@ -174,8 +174,13 @@ main { max-width: 600px; margin: 0 auto; padding: 14px 14px 40px; }
 }
 .admin .lista li.lib .marca { background: var(--oro); color: #fff; }
 .admin .lista li.sig .marca { background: var(--morado); color: #fff; }
+.admin .lista li { align-items: flex-start; }
+.admin .lista .marca { margin-top: 2px; }
+.admin .lista .txt { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .admin .lista li .nom { font-family: var(--serif); font-size: 1.08rem; }
-.admin .lista li .est { margin-left: auto; font-size: .82rem; color: var(--suave); }
+.admin .lista li .fr { font-size: .84rem; line-height: 1.35; color: var(--suave); }
+.admin .lista li.sig .fr { color: var(--tinta); }
+.admin .lista li .est { margin-left: 8px; font-size: .82rem; color: var(--suave); white-space: nowrap; margin-top: 3px; }
 .admin .fila { display: flex; gap: 10px; flex-wrap: wrap; }
 .admin .fila .boton { flex: 1; }
 .admin .nota { font-size: .85rem; color: var(--suave); margin: 8px 0 0; }
