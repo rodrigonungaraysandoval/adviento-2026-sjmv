@@ -244,6 +244,7 @@ tablero.addEventListener("click", async ev => {
 
 /* ---------- Frase ---------- */
 function mostrarFrase(m) {
+  $("vNombre").textContent = m.nombre;
   $("vFrase").textContent = m.frase;
   $("velo").classList.add("abierto");
 }
