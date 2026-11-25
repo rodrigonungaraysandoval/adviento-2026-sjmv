@@ -1,6 +1,6 @@
-import { MOMENTOS, TABLERO } from "./datos.js?v=8";
-import { escucharLiberadas, MODO_PRUEBA } from "./estado.js?v=8";
-import { SALA } from "./config.js?v=8";
+import { MOMENTOS, TABLERO } from "./datos.js?v=9";
+import { escucharLiberadas, MODO_PRUEBA } from "./estado.js?v=9";
+import { SALA } from "./config.js?v=9";
 
 const $ = id => document.getElementById(id);
 const tablero = $("tablero"), bandeja = $("bandeja");
@@ -81,6 +81,7 @@ function dibujarFrases() {
 
 function dibujarTodo(recien) {
   dibujarTablero(recien); dibujarBandeja(); dibujarEstado(); dibujarFrases();
+  $("ayudaArrastre").hidden = colocadas.size === 7;
   if (colocadas.size === 7) terminar();
 }
 
@@ -137,6 +138,7 @@ function colocar(m) {
   colocadas.add(m.n); guardarColocadas();
   delete fallos[m.n];
   dibujarTablero(m.n); dibujarBandeja(); dibujarEstado(); dibujarFrases();
+  $("ayudaArrastre").hidden = colocadas.size === 7;
   if (navigator.vibrate) navigator.vibrate([30, 40, 30]);
   mostrarFrase(m);
 }
