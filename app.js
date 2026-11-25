@@ -1,6 +1,6 @@
-import { MOMENTOS, TABLERO } from "./datos.js";
-import { escucharLiberadas, MODO_PRUEBA } from "./estado.js";
-import { SALA } from "./config.js";
+import { MOMENTOS, TABLERO } from "./datos.js?v=5";
+import { escucharLiberadas, MODO_PRUEBA } from "./estado.js?v=5";
+import { SALA } from "./config.js?v=5";
 
 const $ = id => document.getElementById(id);
 const tablero = $("tablero"), bandeja = $("bandeja");
@@ -57,7 +57,7 @@ function dibujarBandeja() {
   if (!bandeja.querySelector(".ficha")) {
     const v = document.createElement("div"); v.className = "vacia";
     v.textContent = colocadas.size === 7 ? "¡Completaste el rompecabezas!"
-      : liberadas === 0 ? "Tu primera pieza llegará al terminar el primer momento."
+      : liberadas === 0 ? "Aquí se mostrarán las piezas del rompecabezas que deberás colocar."
       : "Espera la siguiente pieza: llegará al terminar el próximo momento.";
     bandeja.appendChild(v);
   }
@@ -75,9 +75,9 @@ function dibujarEstado() {
 }
 
 function dibujarFrases() {
-  $("frases").innerHTML = MOMENTOS.filter(m => colocadas.has(m.n))
-    .map(m => `<li><b>${m.n}. ${m.nombre}.</b> ${m.frase}</li>`).join("")
-    || `<li style="border-color:#e5dccb;color:#7a6d80">Aquí irán apareciendo las frases de cada momento.</li>`;
+  const hay = MOMENTOS.filter(m => colocadas.has(m.n));
+  $("seccionFrases").hidden = hay.length === 0;
+  $("frases").innerHTML = hay.map(m => `<li><b>${m.n}. ${m.nombre}.</b> ${m.frase}</li>`).join("");
 }
 
 function dibujarTodo(recien) {
@@ -99,6 +99,7 @@ function iniciarArrastre(e, m, ficha) {
   ficha.setPointerCapture(e.pointerId);
 
   let px = e.clientX, py = e.clientY;
+  const x0 = px, y0 = py, t0 = Date.now();
   const mover = () => { flot.style.transform = `translate(${px - w / 2}px, ${py - h / 2 - ELEVAR}px)`; };
   mover();
 
@@ -109,6 +110,7 @@ function iniciarArrastre(e, m, ficha) {
     ficha.removeEventListener("pointercancel", onUp);
     flot.remove();
     ficha.classList.remove("arrastrando");
+    if (Math.hypot(px - x0, py - y0) < 10 && Date.now() - t0 < 500) { abrirZoom(m); return; }
     const rr = tablero.getBoundingClientRect();
     const e2 = rr.width / TABLERO;
     const bx = (px - w / 2 - rr.left) / e2, by = (py - h / 2 - ELEVAR - rr.top) / e2;
@@ -139,6 +141,46 @@ function colocar(m) {
   if (navigator.vibrate) navigator.vibrate([30, 40, 30]);
   mostrarFrase(m);
 }
+
+/* ---------- Ver una pieza en grande ---------- */
+function abrirZoom(m) {
+  $("zImg").src = m.img;
+  $("zImg").alt = m.nombre;
+  $("zNombre").textContent = `${m.n}. ${m.nombre}`;
+  $("zoom").classList.add("abierto");
+  zoomDesde = Date.now();
+}
+let zoomDesde = 0;
+// (el mismo toque que abre la pieza genera un "click"; se ignora para que no la cierre al instante)
+$("zoom").addEventListener("click", () => { if (Date.now() - zoomDesde > 400) $("zoom").classList.remove("abierto"); });
+
+// Tocar una pieza ya colocada en el tablero: se detecta por la forma real de la pieza.
+const formas = {};
+function forma(m) {
+  if (formas[m.n]) return formas[m.n];
+  return formas[m.n] = new Promise(ok => {
+    const i = new Image();
+    i.onload = () => {
+      const c = document.createElement("canvas"); c.width = i.width; c.height = i.height;
+      const x = c.getContext("2d"); x.drawImage(i, 0, 0);
+      ok({ w: i.width, h: i.height, d: x.getImageData(0, 0, i.width, i.height).data });
+    };
+    i.onerror = () => ok(null);
+    i.src = m.img;
+  });
+}
+tablero.addEventListener("click", async ev => {
+  const r = tablero.getBoundingClientRect();
+  const bx = (ev.clientX - r.left) / r.width * TABLERO, by = (ev.clientY - r.top) / r.height * TABLERO;
+  for (const m of [...MOMENTOS].reverse()) {
+    if (!colocadas.has(m.n)) continue;
+    if (bx < m.x || by < m.y || bx > m.x + m.w || by > m.y + m.h) continue;
+    const f = await forma(m);
+    if (!f) continue;
+    const px = Math.floor((bx - m.x) / m.w * f.w), py = Math.floor((by - m.y) / m.h * f.h);
+    if (f.d[(py * f.w + px) * 4 + 3] > 100) { abrirZoom(m); return; }
+  }
+});
 
 /* ---------- Frase ---------- */
 function mostrarFrase(m) {

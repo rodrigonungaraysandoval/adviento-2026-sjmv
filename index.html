@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#3d2150">
 <title>Adviento 2026 · Rompecabezas del retiro</title>
 <link rel="icon" href="logo.png">
-<link rel="stylesheet" href="estilo.css">
+<link rel="stylesheet" href="estilo.css?v=5">
 </head>
 <body>
 <header class="cabecera">
@@ -26,7 +26,7 @@
   </div>
 
   <div id="bandeja" class="bandeja" style="margin-top:14px"></div>
-  <p class="ayuda">Arrastra cada pieza con el dedo hasta su lugar en el tablero.</p>
+  <p class="ayuda">Arrastra cada pieza con el dedo hasta su lugar en el tablero. Tócala para verla en grande.</p>
 
   <section id="resultado" class="resultado">
     <p class="felicidades">¡Llegamos a Belén!</p>
@@ -39,11 +39,17 @@
     <p class="ayuda">Si los botones no funcionan en tu teléfono, mantén presionada la imagen para guardarla.</p>
   </section>
 
-  <section class="frases">
+  <section id="seccionFrases" class="frases" hidden>
     <h2>Lo que hemos vivido</h2>
     <ol id="frases"></ol>
   </section>
+  <p class="version">versión 5</p>
 </main>
+
+<div id="zoom" class="zoom" role="dialog" aria-modal="true">
+  <img id="zImg" alt="">
+  <div class="zpie"><b id="zNombre"></b><span>Toca para cerrar</span></div>
+</div>
 
 <div id="velo" class="velo" role="dialog" aria-modal="true">
   <div class="tarjeta-frase">
@@ -54,6 +60,6 @@
   </div>
 </div>
 
-<script type="module" src="app.js"></script>
+<script type="module" src="app.js?v=5"></script>
 </body>
 </html>
