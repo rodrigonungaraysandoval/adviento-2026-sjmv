@@ -190,7 +190,7 @@ function rrect(ctx, x, y, w, h, r) {
 async function crearTarjeta() {
   const W = 2000, H = 1125, M = 62;
   const SERIF = 'Georgia, "Times New Roman", "Noto Serif", serif';
-  const [foto, logo] = await Promise.all([cargarImg("assets/completo.jpg"), cargarImg("assets/logo.png")]);
+  const [foto, logo] = await Promise.all([cargarImg("completo.jpg"), cargarImg("logo.png")]);
   const c = document.createElement("canvas"); c.width = W; c.height = H;
   const ctx = c.getContext("2d");
 
